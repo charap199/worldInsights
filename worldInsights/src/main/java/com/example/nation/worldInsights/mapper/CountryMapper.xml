@@ -1,0 +1,21 @@
+<mapper namespace="com.example.demo.mapper.CountryMapper">
+  <resultMap id="CountryBasic" type="com.example.demo.model.Country">
+    <id column="country_id" property="countryId"/>
+    <result column="name" property="name"/>
+    <result column="area" property="area"/>
+    <result column="country_code2" property="countryCode2"/>
+    <result column="country_code3" property="countryCode3"/>
+    <result column="region_id" property="regionId"/>
+  </resultMap>
+
+  <select id="findAllBasic" resultMap="CountryBasic">
+    SELECT country_id, name, area, country_code2, country_code3, region_id
+    FROM countries
+    ORDER BY name
+  </select>
+
+  <select id="findById" parameterType="int" resultMap="CountryBasic">
+    SELECT country_id, name, area, country_code2, country_code3, region_id
+    FROM countries WHERE country_id = #{id}
+  </select>
+</mapper>

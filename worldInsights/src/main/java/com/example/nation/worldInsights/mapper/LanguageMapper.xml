@@ -1,0 +1,14 @@
+<mapper namespace="com.example.demo.mapper.LanguageMapper">
+  <resultMap id="LangMap" type="com.example.demo.model.Language">
+    <id column="language_id" property="languageId"/>
+    <result column="name" property="name"/>
+  </resultMap>
+
+  <select id="findByCountryId" parameterType="int" resultMap="LangMap">
+    SELECT l.language_id, l.name
+    FROM languages l
+    JOIN country_languages cl ON l.language_id = cl.language_id
+    WHERE cl.country_id = #{countryId}
+    ORDER BY l.name
+  </select>
+</mapper>

@@ -1,0 +1,35 @@
+<mapper namespace="com.example.demo.mapper.CountryStatMapper">
+  <!-- Return columns: country_id, country_name, country_code3, year, population, gdp, ratio -->
+  <select id="findMaxGdpPerPopulationPerCountry" resultType="map">
+    SELECT cs.country_id,
+           c.name AS country_name,
+           c.country_code3,
+           cs.year,
+           cs.population,
+           cs.gdp,
+           (CASE WHEN cs.population > 0 THEN cs.gdp/cs.population ELSE NULL END) AS ratio
+    FROM country_stats cs
+    JOIN countries c ON cs.country_id = c.country_id
+    JOIN (
+      SELECT country_id, MAX(CASE WHEN population>0 THEN gdp/population ELSE NULL END) AS max_ratio
+      FROM country_stats
+      GROUP BY country_id
+    ) m ON cs.country_id = m.country_id
+       AND (CASE WHEN cs.population>0 THEN cs.gdp/cs.population ELSE NULL END) = m.max_ratio
+    ORDER BY c.name;
+  </select>
+
+  <select id="findFilteredByRegionAndYear" resultType="map">
+    SELECT cont.name AS continent, r.name AS region, c.name AS country, cs.year, cs.population, cs.gdp,
+           c.country_code3
+    FROM country_stats cs
+    JOIN countries c ON cs.country_id = c.country_id
+    JOIN regions r ON c.region_id = r.region_id
+    JOIN continents cont ON r.continent_id = cont.continent_id
+    WHERE (#{regionId} IS NULL OR r.region_id = #{regionId})
+      AND (#{yearFrom} IS NULL OR cs.year >= #{yearFrom})
+      AND (#{yearTo} IS NULL OR cs.year <= #{yearTo})
+    ORDER BY cont.name, r.name, c.name, cs.year
+    LIMIT #{limit} OFFSET #{offset}
+  </select>
+</mapper>

@@ -1,0 +1,13 @@
+<mapper namespace="com.example.nation.worldInsights.mapper.RegionMapper">
+    <resultMap id="RegionMap" type="com.example.nation.worldInsights.model.Region">
+        <id column="region_id" property="regionId"/>
+        <result column="name" property="name"/>
+        <result column="continent_id" property="continentId"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="RegionMap">
+        SELECT region_id, name, continent_id
+        FROM regions
+        ORDER BY name
+    </select>
+</mapper>
